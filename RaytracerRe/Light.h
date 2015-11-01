@@ -2,7 +2,10 @@
 #include <glm.hpp>
 
 using namespace glm;
-
+/** \class Light
+* \brief Light data type allows for soft shadow calculation.
+* \details Based on the lecture slides and task sheets associated with soft shadows.
+*/
 class Light
 {
 private:
@@ -29,6 +32,14 @@ public:
 	}
 	~Light() {}
 
+	/** \brief intersection - Returns true or false if the ray has hit the light or not.
+	* \details Based on the lecture slides and task sheets 
+	*
+	* \param rayOrigin
+	* \param rayDirection
+	*
+	* \return bool
+	*/
 	bool intersection(vec3 rayOrigin, vec3 rayDirection)
 	{
 		float Ts[6];

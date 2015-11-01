@@ -5,6 +5,9 @@
 
 using namespace glm;
 
+/** \class Intersection
+*	\brief Datatype holding information about a hit
+*/
 class Intersection
 {
 public:

@@ -6,6 +6,9 @@
 
 using namespace glm;
 
+/** \class Triangle
+* \brief Extends the Object data type and is used to describe an infinite plane
+*/
 class Triangle :public Object
 {
 private:
@@ -32,6 +35,15 @@ public:
 
 	~Triangle() {}
 
+	/** \brief isIntersecting - An override of the Object::isIntersecting method
+	* \details Based on the lecture slides and task sheets.
+	*
+	* \param origin vec3 Origin of the fired ray.
+	* \param direction vec3 Direction of the fired ray.
+	* \param hit Intersection* In the event of a hit is populated with the relevant information.
+	*
+	* \return bool
+	*/
 	bool isIntersecting(vec3 rayOrigin, vec3 rayDirection, Intersection* hit)
 	{
 		vec3 one = _coordinates[1] - _coordinates[0];

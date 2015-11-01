@@ -3,6 +3,9 @@
 
 using namespace glm;
 
+/** \class Material
+* \brief A datatype used to describe the visual properties of an object
+*/
 class Material
 {
 private:
@@ -20,7 +23,7 @@ public:
 	}
 	Material(vec3 dCol, vec3 sCol, float shine) : _diffuse(dCol), _specular(sCol), _shine(shine) {}
 	~Material() {}
-
+	//Getters
 	vec3 getDiffuse()
 	{
 		return _diffuse;

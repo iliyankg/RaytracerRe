@@ -12,6 +12,12 @@
 //Namespace used to seperate the GPU implementation from other sides of the program.
 namespace Shaderhandler
 {
+	/**\brief readFile - Basic file loader; 
+	* \details	Nexcius.net, (2012). How to load a GLSL shader in OpenGL using C++. [online]
+	*			Available at: http://www.nexcius.net/2012/11/20/how-to-load-a-glsl-shader-in-opengl-using-c/ [Accessed 1 Nov. 2015].
+	* \param filePath const char* 
+	* \return string
+	*/
 	std::string readFile(const char* filePath)
 	{
 		std::string data;
@@ -36,6 +42,16 @@ namespace Shaderhandler
 		return data;
 	}
 	
+	/** \brief nextPowerOfTwo - Finds the nearest power of two of the supplied number.
+	* \details	Used in the compute shader invocation, the ammount of times the shader is called must be a power of two, 
+	*			where the framebuffer size does not.
+	*			
+	*			Burjack, K. (2015). 2.6.1. Ray tracing with OpenGL Compute Shaders (Part I). [online] GitHub.
+	*			Available at: https://github.com/LWJGL/lwjgl3-wiki/wiki/2.6.1.-Ray-tracing-with-OpenGL-Compute-Shaders-(Part-I) [Accessed 1 Nov. 2015].
+	* 
+	* \param x int
+	* \return int
+	*/
 	int nextPowerOfTwo(int x)
 	{
 		x--;
@@ -48,6 +64,12 @@ namespace Shaderhandler
 		return x;
 	}
 
+	/**\brief shaderCompileTest - Prints compilation errors (line and row numbers) for the given shader.
+	* \details	Nexcius.net, (2012). How to load a GLSL shader in OpenGL using C++. [online]
+	*			Available at: http://www.nexcius.net/2012/11/20/how-to-load-a-glsl-shader-in-opengl-using-c/ [Accessed 1 Nov. 2015].
+	* \param shader GLuint 
+	* \return void
+	*/
 	void shaderCompileTest(GLuint shader)
 	{
 		GLint result = GL_FALSE;
@@ -60,15 +82,18 @@ namespace Shaderhandler
 		std::cout << &vertShaderError[0] << std::endl;
 	}
 
-	GLuint vao;
-	GLuint vbo;
-	GLuint texture;
-	GLuint quadProgram;
+	GLuint vao; // Vertex Array Object (VAO)
+	GLuint vbo; // Vertex Buffer Object (VBO)
+	GLuint texture; // Texture to be used on the final screen-size quad
+	GLuint quadProgram; // Basic vertex - fragment shader pipeline
 
-	GLint workGroupSizeX;
-	GLint workGroupSizeY;
-	GLuint tracerProgram;
+	GLint workGroupSizeX; // Used when invoking the compute shader
+	GLint workGroupSizeY; // Used when invoking the compute shader
+	GLuint tracerProgram; // Holds the compiled compute shader.
 
+	/** \brief createQuadBuffers - Defines and binds the VAO and VBO used later to render the screen size quad.
+	* \return void
+	*/
 	void createQuadBuffers()
 	{
 		//Creates the vertex array and vertex buffer objects 
@@ -96,38 +121,44 @@ namespace Shaderhandler
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 	}
-
+	/** \brief createQuadProgram - Creates the program used to render the raytraced image.
+	* \return void
+	*/
 	void createQuadProgram()
 	{
 		quadProgram = glCreateProgram();
 
-		GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
-		GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
-
+		GLuint vertex = glCreateShader(GL_VERTEX_SHADER); //Defines temporary vertex shader
+		GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER); //Defines temporary fragment shader
+		//Loads the source code for the shaders.
 		std::string vertStr = readFile("vertex.glsl");
 		std::string fragStr = readFile("fragment.glsl");
 		const char* vertSource = vertStr.c_str();
 		const char* fragSource = fragStr.c_str();
 
+		//Compiles the vertex shader
 		glShaderSource(vertex, 1, &vertSource, NULL);
 		glCompileShader(vertex);
-
+		//Test for vertex shader compilation errors
 		std::cout << "VERTEX::" << std::endl;
 		shaderCompileTest(vertex);
-
+		//Compiles fragment shader
 		glShaderSource(fragment, 1, &fragSource, NULL);
 		glCompileShader(fragment);
-
+		//Test for fragment shader compilation errors
 		std::cout << "FRAGMENT::" << std::endl;
 		shaderCompileTest(vertex);
-
+		//Attaches the vertex and fragment shader to the program and links them
 		glAttachShader(quadProgram, vertex);
 		glAttachShader(quadProgram, fragment);
 		glLinkProgram(quadProgram);
-
+		//Garbage collection
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
 	}
+	/** \brief createTeture - Binds the 'GLuint texture' variables as a GL_TEXTURE_2D, sets basic default settings and makes it currently active
+	* \return void
+	*/
 	void createTexture()
 	{
 		glGenTextures(1, &texture);
@@ -138,69 +169,80 @@ namespace Shaderhandler
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-
+	/** \brief createTracerProgram - Creates the program used to performe the raytracing.
+	* \return void
+	*/
 	void createTracerProgram()
 	{
-		tracerProgram = glCreateProgram();
-		GLuint compute = glCreateShader(GL_COMPUTE_SHADER);
+		tracerProgram = glCreateProgram(); 
+		GLuint compute = glCreateShader(GL_COMPUTE_SHADER); //Compute shader available in OpenGL 4.3 and higher
 
+		//Loads the source code
 		std::string computeStr = readFile("compute.glsl");
 		const char* computeSource = computeStr.c_str();
-
-
+		//Binds the source and compiles it
 		glShaderSource(compute, 1, &computeSource, NULL);
 		glCompileShader(compute);
-
+		//Checks for compilation errors
 		std::cout << "COMPUTE::" << std::endl;
 		shaderCompileTest(compute);
-
+		//Attaches the compiled shader to the program and links it
 		glAttachShader(tracerProgram, compute);
 		glLinkProgram(tracerProgram);
-
 	}
-
+	/** \brief initQuadProg - Sets the 'tex' parameter as an input used to bind the texture to the fragment shader.
+	* \return void
+	*/
 	void initQuadProg()
 	{
-
-		glUseProgram(quadProgram);
-		GLint texUniform = glGetUniformLocation(quadProgram, "tex");
-		glUniform1i(texUniform, 0);
-		glUseProgram(0);
+		glUseProgram(quadProgram); //Sets 'quadProgram' as active one
+		GLint texUniform = glGetUniformLocation(quadProgram, "tex"); //Gets the pointer to the location of the input defined by "tex"
+		glUniform1i(texUniform, 0); //Sets it as the 0th uniform integer input.
+		glUseProgram(0); //Stops 'quadProgram' being the current active one.
 	}
+	/** \brief createTracerProgram - Gets the the work group size used to run the compute shader
+	* in the appropriate dimension.
+	* \return void
+	*/
 	void initRaytracer()
 	{
-
-		glUseProgram(tracerProgram);
-		GLint workGroupSize[3];
-		glGetProgramiv(tracerProgram, GL_COMPUTE_WORK_GROUP_SIZE, workGroupSize);
+		glUseProgram(tracerProgram); //Sets 'tracerProgram' as current active.
+		GLint workGroupSize[3]; //Temporary array used to store the pointers
+		glGetProgramiv(tracerProgram, GL_COMPUTE_WORK_GROUP_SIZE, workGroupSize); 
 		workGroupSizeX = workGroupSize[0];
 		workGroupSizeY = workGroupSize[1];
-
-		glUseProgram(0);
+		glUseProgram(0); //Stops 'traceProgram' being the current active one.
 	}
 
+	/** \brief trace - Runs the entire program from raytracing to rendering the textured quad.
+	* \details Swapping between the thwo shader programs binding and un-binding the 'texture' variaiable 
+	* where needed. 
+	* \return void
+	*/
 	void trace()
 	{
-		glUseProgram(tracerProgram);
+		//COMPUTE SHADER
+		glUseProgram(tracerProgram); //Sets 'tracerProgram' as the current active shader program
 
-		glBindImageTexture(0, texture, 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
-
+		glBindImageTexture(0, texture, 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F); //Binds texture to the 0th binding in the compute shader.
+		//Sets the workgroup size.
 		GLint worksizeX = nextPowerOfTwo(640);
 		GLint worksizeY = nextPowerOfTwo(480);
-
+		//Runs the compute shader in the appropriate dimension 
 		glDispatchCompute(worksizeX / workGroupSizeX, worksizeY / workGroupSizeY, 1);
+		
+		glBindImageTexture(0, 0, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);//Unbinds 'texture'
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);//Blocks altering the image any further
+		glUseProgram(0); //Stops 'tracerProgram' from being used.
 
-		glBindImageTexture(0, 0, 0, false, 0, GL_READ_WRITE, GL_RGBA32F);
-		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-		glUseProgram(0);
-
-		glUseProgram(quadProgram);
-		glBindVertexArray(vao);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
-		glUseProgram(0);
+		//QUAD SHADER
+		glUseProgram(quadProgram); //Sets 'quadProgram' as curently active shader program 
+		glBindVertexArray(vao); //Binds the VAO to the program
+		glBindTexture(GL_TEXTURE_2D, texture); //Binds the texture to the program
+		glDrawArrays(GL_TRIANGLES, 0, 6); //Draws triangles based on the VAO/VBO vertices
+		glBindTexture(GL_TEXTURE_2D, 0); //Unbinds the texture
+		glBindVertexArray(0); //Unbinds the VAO 
+		glUseProgram(0); //Stops 'quadProgram' from being used
 
 	}
 }

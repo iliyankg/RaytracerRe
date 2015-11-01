@@ -6,6 +6,9 @@
 
 using namespace glm;
 
+/** \class Sphere
+* \brief Extends the Object data type and is used to describe an infinite plane
+*/
 class Sphere : public Object
 {
 private:
@@ -22,6 +25,15 @@ public:
 	}
 	~Sphere() {}
 
+	/** \brief isIntersecting - An override of the Object::isIntersecting method
+	* \details Based on the lecture slides and task sheets.
+	*
+	* \param origin vec3 Origin of the fired ray.
+	* \param direction vec3 Direction of the fired ray.
+	* \param hit Intersection* In the event of a hit is populated with the relevant information.
+	*
+	* \return bool
+	*/
 	bool isIntersecting(vec3 origin, vec3 direction, Intersection* hit)
 	{
 		vec3 posToOrigin = _position - origin;
