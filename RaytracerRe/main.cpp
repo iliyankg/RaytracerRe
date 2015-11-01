@@ -91,7 +91,7 @@ void initialize()
 	coords[1] = vec3(-5.0, -4.0, -30.0);
 	coords[2] = vec3(5.0, -4.0, 30.0);
 	coords[3] = vec3(5.0, -4.0, -30.0);
-	objects.push_back(new Plane(normalize(vec3(0.0f, 1.0f, 0.0f)), coords, vec3(0.0, 0.0, 1.0), vec3(0.7, 0.7, 0.7), 10.0f));
+	objects.push_back(new Plane(normalize(vec3(0.0f, 1.0f, 0.0f)), coords, vec3(0.0, 0.0, 1.0), vec3(0.7, 0.7, 0.7), 5.0f));
 
 	//BOTTOM ROW OF SPHERES
 	objects.push_back(new Sphere(1.0, vec3(6.0, -2.0, -32), vec3(1.0, 0.32, 0.36), vec3(0.7, 0.7, 0.7), 10.0f));
@@ -127,6 +127,17 @@ void initialize()
 	coordsTwo[1] = vec3(-9.0, -3.0, -30.0);
 	coordsTwo[2] = vec3(-9.0, -3.0, -34.0);
 	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(0.7, 0.7, 0.7), 10.0f));
+
+	//BACK MIRROR PLANE - bot left try
+	coordsTwo[0] = vec3(5.0, 6.0, -50.0);
+	coordsTwo[1] = vec3(5.0, -3.0, -50.0);
+	coordsTwo[2] = vec3(-6.0, -3.0, -50.0);
+	objects.push_back(new Triangle(coordsTwo, vec3(0.7f, 0.7f, 0.7f), vec3(0.7, 0.7, 0.7), 10.0f));
+	//BACK MIRROR PLANE - top right try
+	coordsTwo[0] = vec3(5.0, 6.0, -50.0);
+	coordsTwo[1] = vec3(-6.0, 6.0, -50.0);
+	coordsTwo[2] = vec3(-6.0, -3.0, -50.0);
+	objects.push_back(new Triangle(coordsTwo, vec3(0.7f, 0.7f, 0.7f), vec3(0.7, 0.7, 0.7), 10.0f));
 
 	//Sets up the plane and texture we will render to.
 	glMatrixMode(GL_PROJECTION);
@@ -171,7 +182,7 @@ void render()
 			rayDirection = glm::normalize(rayDirection);
 
 			Raytracer::hitMats.clear(); //Clears the list of hit materials prior to performing a new trace.
-			vec3 finalColor = Raytracer::recursiveTrace(cameraPos, rayDirection, objects, light, 1);
+			vec3 finalColor = Raytracer::recursiveTrace(cameraPos, rayDirection, objects, light, 0);
 
 			//Populates the 1D array with the corresponding colors.
 			image[(i * WIDTH + j) * 3] = finalColor.r;

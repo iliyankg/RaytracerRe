@@ -145,11 +145,9 @@ namespace Raytracer
 	*/
 	vec3 recursiveTrace(vec3 origin, vec3 direction, vector<Object*> objs, Light* light, int counter)
 	{
-		if (counter == 0)
+		if (counter == 2)
 		{
-			vec4 temp = mix(vec4(calcFinalColor(light, &hitMats[0], direction), 0), vec4(0.0, 0.0, 0.0, 1.0), _shadowAmmount(index, hitMats[0].hitPos, light, objs));
-			return vec3(temp.r, temp.g, temp.b);
-
+			return vec3(0.0, 0.0, 0.0);//mix(calcFinalColor(light, &hitMats.back(), direction), vec3(0.0, 0.0, 0.0), _shadowAmmount(index, hitMats.back().hitPos, light, objs));
 		}
 		else
 		{
@@ -161,8 +159,12 @@ namespace Raytracer
 			{
 				hitMats.push_back(Intersection());
 			}
-			counter--;
-			return recursiveTrace(origin, direction, objs, light, counter);
+
+			vec3 reflectedDirection = direction - 2 * dot(direction, hitMats[counter].hitNormal) * hitMats[counter].hitNormal;
+			vec3 reflectedOrigin = hitMats[counter].hitPos + hitMats[counter].hitNormal * float(1e-4);
+
+			counter++;
+			return mix(calcFinalColor(light, &hitMats[counter-1], direction), vec3(0.0, 0.0, 0.0), _shadowAmmount(index, hitMats[counter-1].hitPos, light, objs)) + hitMats[counter - 1].hitMat.getShine() * recursiveTrace(reflectedOrigin, reflectedDirection, objs, light, counter);
 		}
 	}
 }
