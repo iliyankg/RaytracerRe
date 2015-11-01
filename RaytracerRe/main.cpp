@@ -91,42 +91,42 @@ void initialize()
 	coords[1] = vec3(-5.0, -4.0, -30.0);
 	coords[2] = vec3(5.0, -4.0, 30.0);
 	coords[3] = vec3(5.0, -4.0, -30.0);
-	objects.push_back(new Plane(normalize(vec3(0.0f, 1.0f, 0.0f)), coords, vec3(0.0, 0.0, 1.0), vec3(1.0, 1.0, 1.0), 10.0f));
+	objects.push_back(new Plane(normalize(vec3(0.0f, 1.0f, 0.0f)), coords, vec3(0.0, 0.0, 1.0), vec3(0.7, 0.7, 0.7), 10.0f));
 
 	//BOTTOM ROW OF SPHERES
-	objects.push_back(new Sphere(1.0, vec3(6.0, -2.0, -32), vec3(1.0, 0.32, 0.36), vec3(1.0, 1.0, 1.0), 5.0f));
-	objects.push_back(new Sphere(1.0, vec3(7.0, -2.0, -30), vec3(0.9, 0.76, 0.46), vec3(1.0, 1.0, 1.0), 5.0f));
-	objects.push_back(new Sphere(1.0, vec3(5.0, -2.0, -34), vec3(0.65, 0.77, 0.97), vec3(1.0, 1.0, 1.0), 5.0f));
+	objects.push_back(new Sphere(1.0, vec3(6.0, -2.0, -32), vec3(1.0, 0.32, 0.36), vec3(0.7, 0.7, 0.7), 10.0f));
+	objects.push_back(new Sphere(1.0, vec3(7.0, -2.0, -30), vec3(0.9, 0.76, 0.46), vec3(0.7, 0.7, 0.7), 10.0f));
+	objects.push_back(new Sphere(1.0, vec3(5.0, -2.0, -34), vec3(0.65, 0.77, 0.97), vec3(0.7, 0.7, 0.7), 10.0f));
 	//MID ROW OF SPHERES
-	objects.push_back(new Sphere(1.0, vec3(6.0, 0.5, -32), vec3(0.9, 0.7, 0.2), vec3(1.0, 1.0, 1.0), 5.0f));
-	objects.push_back(new Sphere(1.0, vec3(7.0, 0.5, -30), vec3(0.3, 0.5, 0.9), vec3(1.0, 1.0, 1.0), 5.0f));
-	objects.push_back(new Sphere(1.0, vec3(5.0, 0.5, -34), vec3(0.9, 0.9, 0.9), vec3(1.0, 1.0, 1.0), 5.0f));
+	objects.push_back(new Sphere(1.0, vec3(6.0, 0.5, -32), vec3(0.9, 0.7, 0.2), vec3(0.7, 0.7, 0.7), 10.0f));
+	objects.push_back(new Sphere(1.0, vec3(7.0, 0.5, -30), vec3(0.3, 0.5, 0.9), vec3(0.7, 0.7, 0.7), 10.0f));
+	objects.push_back(new Sphere(1.0, vec3(5.0, 0.5, -34), vec3(0.9, 0.9, 0.9), vec3(0.7, 0.7, 0.7), 10.0f));
 	//TOP ROW OF SPHERES
-	objects.push_back(new Sphere(1.0, vec3(6.0, 3.0, -32), vec3(0.9, 0.7, 0.2), vec3(1.0, 1.0, 1.0), 5.0f));
-	objects.push_back(new Sphere(1.0, vec3(7.0, 3.0, -30), vec3(0.1, 0.6, 0.9), vec3(1.0, 1.0, 1.0), 5.0f));
-	objects.push_back(new Sphere(1.0, vec3(5.0, 3.0, -34), vec3(0.1, 0.9, 0.2), vec3(1.0, 1.0, 1.0), 5.0f));
+	objects.push_back(new Sphere(1.0, vec3(6.0, 3.0, -32), vec3(0.9, 0.7, 0.2), vec3(0.7, 0.7, 0.7), 128.0f));
+	objects.push_back(new Sphere(1.0, vec3(7.0, 3.0, -30), vec3(0.1, 0.6, 0.9), vec3(0.7, 0.7, 0.7), 5.0f));
+	objects.push_back(new Sphere(1.0, vec3(5.0, 3.0, -34), vec3(0.1, 0.9, 0.2), vec3(0.7, 0.7, 0.7), 60.0f));
 
 	vec3 coordsTwo[3]; //Pyramid coordinates
 	//LEFT FACE
 	coordsTwo[0] = vec3(-6.0, 2.0, -32.0);
 	coordsTwo[1] = vec3(-5.0, -3.0, -30.0);
 	coordsTwo[2] = vec3(-5.0, -3.0, -34.0);
-	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(1.0, 1.0, 1.0), 10.0f));
+	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(0.7, 0.7, 0.7), 10.0f));
 	//FRONT FACE
 	coordsTwo[0] = vec3(-6.0, 2.0, -32.0);
 	coordsTwo[1] = vec3(-5.0, -3.0, -30.0);
 	coordsTwo[2] = vec3(-9.0, -3.0, -30.0);
-	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(1.0, 1.0, 1.0), 10.0f));
+	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(0.7, 0.7, 0.7), 10.0f));
 	//BACK FACE
 	coordsTwo[0] = vec3(-6.0, 2.0, -32.0);
 	coordsTwo[1] = vec3(-5.0, -3.0, -34.0);
 	coordsTwo[2] = vec3(-9.0, -3.0, -34.0);
-	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(1.0, 1.0, 1.0), 10.0f));
+	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(0.7, 0.7, 0.7), 10.0f));
 	//RIGHT FACE
 	coordsTwo[0] = vec3(-6.0, 2.0, -32.0);
 	coordsTwo[1] = vec3(-9.0, -3.0, -30.0);
 	coordsTwo[2] = vec3(-9.0, -3.0, -34.0);
-	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(1.0, 1.0, 1.0), 10.0f));
+	objects.push_back(new Triangle(coordsTwo, vec3(1.0f, 0.0f, 0.0), vec3(0.7, 0.7, 0.7), 10.0f));
 
 	//Sets up the plane and texture we will render to.
 	glMatrixMode(GL_PROJECTION);

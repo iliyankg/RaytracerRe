@@ -36,11 +36,10 @@ namespace Raytracer
 	*/
 	float _calcSpec(Light* light, Intersection* hit, vec3 rayDirection)
 	{
-		vec3 hitToCamDirection = -rayDirection;
-		vec3 hitToLightDirection = normalize(light->lightPos - hit->hitPos);
-		vec3 reflected = -2 * dot(-hitToLightDirection, hit->hitNormal) * hit->hitNormal - hitToLightDirection;
+		vec3 hitToLightDirection = normalize(hit->hitPos - light->lightPos);
+		vec3 reflected = 2 * dot(hitToLightDirection, hit->hitNormal) * hit->hitNormal - hitToLightDirection;
 
-		return light->specIntensity * pow(fmax(0, dot(reflected, hitToCamDirection)), hit->hitMat.getShine());
+		return light->specIntensity * pow(fmax(0, dot(reflected, rayDirection)), hit->hitMat.getShine());
 	}
 	/** \brief calcFinalColor - Returns the final color by utelizing the _calcDiffuse() and _calcSpec() functions.
 	* \param light Light*
@@ -52,7 +51,7 @@ namespace Raytracer
 	vec3 calcFinalColor(Light* light, Intersection* hit, vec3 direction)
 	{
 		vec3 toReturn;
-		toReturn.r = hit->hitMat.getDiffuse().r * light->ambientIntensity + hit->hitMat.getDiffuse().r * _calcDiffuse(light, hit) + hit->hitMat.getSpecular().r * _calcSpec(light, hit, direction);
+		toReturn.r = hit->hitMat.getDiffuse().r * light->ambientIntensity + hit->hitMat.getDiffuse().r * _calcDiffuse(light, hit) + hit->hitMat.getSpecular().r* _calcSpec(light, hit, direction);
 		toReturn.g = hit->hitMat.getDiffuse().g * light->ambientIntensity + hit->hitMat.getDiffuse().g * _calcDiffuse(light, hit) + hit->hitMat.getSpecular().g * _calcSpec(light, hit, direction);
 		toReturn.b = hit->hitMat.getDiffuse().b * light->ambientIntensity + hit->hitMat.getDiffuse().b * _calcDiffuse(light, hit) + hit->hitMat.getSpecular().b * _calcSpec(light, hit, direction);
 		return toReturn;
