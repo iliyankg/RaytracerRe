@@ -21,7 +21,7 @@ using namespace glm;
 /** #define CPU - will run CPU version
 *   #define GPU - will run GPU version
 */
-#define GPU 
+#define CPU 
 
 #define WIDTH 640
 #define HEIGHT 480
@@ -224,7 +224,10 @@ void initialize()
 
 void render(void)
 {
+	t = clock();
 	Shaderhandler::trace();
+	t = clock() - t;
+	std::cout << "Frame took: " << (float)t / CLOCKS_PER_SEC << " seconds to render." << std::endl;
 
 	glFlush();
 }

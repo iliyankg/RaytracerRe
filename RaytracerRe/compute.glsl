@@ -49,6 +49,7 @@ struct Plane
 	vec3 _normal;
 };
 
+//Array of matterials whos indecies match the order of created objects
 const Material mats[] =
 {
 	{vec3(1.0, 0.32, 0.36), vec3(1.0, 1.0, 1.0), 10.0},
@@ -58,6 +59,7 @@ const Material mats[] =
 	{vec3(0.0, 0.0, 1.0), vec3(1.0, 1.0, 1.0), 5.0}
 };
 
+//Creates the spheres
 int NUM_SPHERES = 4;
 const Sphere spheres[] =
 {
@@ -73,12 +75,13 @@ const Plane planes[] =
 	{vec3(-5.0, -4.0, 30.0), vec3(-5.0, -4.0, -30.0), vec3(5.0, -4.0, -30.0), vec3(5.0, -4.0, -30.0), vec3(0.0, 1.0, 0.0)}
 };
 
-
+//Calculates diffuse
 float calcDiffuse(Light localLight, Intersection hit)
 {
 	return localLight._intensity * max(0, dot(normalize(localLight._lightPos - hit._closeHitPos), hit._closeHitNormal));
 }
 
+//Calculates specular
 float calcSpec(Light light, Intersection hit, vec3 rayDirection, float shine)
 {
 	vec3 hitToCamDirection = -rayDirection;
@@ -87,7 +90,7 @@ float calcSpec(Light light, Intersection hit, vec3 rayDirection, float shine)
 	return light._specIntensity * pow(max(0, dot(reflected, hitToCamDirection)), shine);
 }
 
-
+//Checks for intersection with a specific sphere
 bool sphereIntersection(vec3 rayGin, vec3 rayDir, const Sphere target, out Intersection hit)
 {
 	vec3 L = target._position - rayGin;
@@ -123,6 +126,7 @@ bool sphereIntersection(vec3 rayGin, vec3 rayDir, const Sphere target, out Inter
 	}
 }
 
+//Checks for intersection with a specific plane
 bool planeIntersection(vec3 rayGin, vec3 rayDir, const Plane target, out Intersection hit)
 {
 	float devideBy = dot(rayDir, target._normal);
@@ -152,8 +156,10 @@ bool planeIntersection(vec3 rayGin, vec3 rayDir, const Plane target, out Interse
 	}
 }
 
+//External binding for the image to be rendered to
 layout(binding = 0, rgba32f) uniform image2D framebuffer;
 
+//Initial work group sizes
 layout(local_size_x = 16, local_size_y = 8) in;
 
 void main(void)
@@ -192,7 +198,7 @@ void main(void)
 
 	int hitId;
 
-	//Primary Ray
+	//Due to limitations two for loops are needed to itterate through our objects. (one for each object type)
 	//Sphere
 	for(int i = 0; i < NUM_SPHERES; i++)
 	{
@@ -226,7 +232,7 @@ void main(void)
 		}
 	}
 
-	//Shadow Ray
+	//As with the primary ray the secondary shadow ray also requires two for loops for each object type.
 	//Sphere
 	for(int i = 0; i < NUM_SPHERES; i++)
 	{
@@ -259,12 +265,15 @@ void main(void)
 	{
 		if(shadowHit._isHit)
 		{
+			//Shadow areas are set to the ambient color
 			finalColor.r = mats[hitId]._diffuseColor.r * light._ambientIntensity;
 			finalColor.g = mats[hitId]._diffuseColor.g * light._ambientIntensity;
 			finalColor.b = mats[hitId]._diffuseColor.b * light._ambientIntensity;
 		}
 		else
 		{
+			//No shadow areas are set to the diffuse calculation based on the matterial array listed above. 
+			//hitId is calculated on numbers of objects in the lits and is accumolative. (max value of hitId is spheres.lenght + planes.lenght)
 			finalColor.r = mats[hitId]._diffuseColor.r * light._ambientIntensity + mats[hitId]._diffuseColor.r * calcDiffuse(light, hit) + mats[hitId]._diffuseColor.r * calcSpec(light, hit, rayDirection, mats[hitId]._shine);
 			finalColor.g = mats[hitId]._diffuseColor.g * light._ambientIntensity + mats[hitId]._diffuseColor.g * calcDiffuse(light, hit) + mats[hitId]._diffuseColor.g * calcSpec(light, hit, rayDirection, mats[hitId]._shine);
 			finalColor.b = mats[hitId]._diffuseColor.b * light._ambientIntensity + mats[hitId]._diffuseColor.b * calcDiffuse(light, hit) + mats[hitId]._diffuseColor.b * calcSpec(light, hit, rayDirection, mats[hitId]._shine);
@@ -272,6 +281,7 @@ void main(void)
 	}
 	else
 	{
+		//No hit is set to black
 		finalColor.r = 0.0;
 		finalColor.g = 0.0;
 		finalColor.b = 0.0;
@@ -282,5 +292,6 @@ void main(void)
 
 	//vec4 color = vec4(1.0, 1.0, 0.0, 1.0);
 	
+	//The pixel just calculated is set with the color variable onto the output image (framebuffer)
 	imageStore(framebuffer, pix, color);
 }
