@@ -145,6 +145,7 @@ namespace Raytracer
 	*/
 	vec3 recursiveTrace(vec3 origin, vec3 direction, vector<Object*> objs, Light* light, int counter)
 	{
+		//Variable next to counter is number of bouncess. (1 would mean no reflections at all;)
 		if (counter == 2)
 		{
 			return vec3(0.0, 0.0, 0.0);//mix(calcFinalColor(light, &hitMats.back(), direction), vec3(0.0, 0.0, 0.0), _shadowAmmount(index, hitMats.back().hitPos, light, objs));
@@ -161,7 +162,7 @@ namespace Raytracer
 			}
 
 			vec3 reflectedDirection = direction - 2 * dot(direction, hitMats[counter].hitNormal) * hitMats[counter].hitNormal;
-			vec3 reflectedOrigin = hitMats[counter].hitPos + hitMats[counter].hitNormal * float(1e-4);
+			vec3 reflectedOrigin = hitMats[counter].hitPos + hitMats[counter].hitNormal * 0.000001f;//float(1e-4);
 
 			counter++;
 			return mix(calcFinalColor(light, &hitMats[counter-1], direction), vec3(0.0, 0.0, 0.0), _shadowAmmount(index, hitMats[counter-1].hitPos, light, objs)) + hitMats[counter - 1].hitMat.getShine() * recursiveTrace(reflectedOrigin, reflectedDirection, objs, light, counter);

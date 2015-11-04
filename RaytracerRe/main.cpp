@@ -2,6 +2,7 @@
 #include <GL\freeglut.h>
 #include <glm.hpp>
 #include <vector>
+#include <ppl.h>
 
 #include <time.h>
 #include <iostream>
@@ -17,7 +18,10 @@
 using namespace std;
 using namespace glm;
 
-#define CPU //Used to switch between CPU and GPU implementations
+/** #define CPU - will run CPU version
+*   #define GPU - will run GPU version
+*/
+#define GPU 
 
 #define WIDTH 640
 #define HEIGHT 480
@@ -91,7 +95,7 @@ void initialize()
 	coords[1] = vec3(-5.0, -4.0, -30.0);
 	coords[2] = vec3(5.0, -4.0, 30.0);
 	coords[3] = vec3(5.0, -4.0, -30.0);
-	objects.push_back(new Plane(normalize(vec3(0.0f, 1.0f, 0.0f)), coords, vec3(0.0, 0.0, 1.0), vec3(0.7, 0.7, 0.7), 5.0f));
+	objects.push_back(new Plane(normalize(vec3(0.0f, 1.0f, 0.0f)), coords, vec3(0.0, 0.0, 1.0), vec3(0.7, 0.7, 0.7), 10.0f));
 
 	//BOTTOM ROW OF SPHERES
 	objects.push_back(new Sphere(1.0, vec3(6.0, -2.0, -32), vec3(1.0, 0.32, 0.36), vec3(0.7, 0.7, 0.7), 10.0f));
